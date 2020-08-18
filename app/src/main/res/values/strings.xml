@@ -1,3 +1,74 @@
 <resources>
+    <!--    Overall     -->
     <string name="app_name">AsthmaSupport</string>
+    <string name="systemName_tx">AsthmaSupport 1.0</string>
+
+    <!--    Login   -->
+    <string name="userName_tx">Nazwa użytkownika</string>
+    <string name="password_tx">Hasło</string>
+    <string name="loginButton_tx">Zalogowanie</string>
+    <string name="registerButton_tx">Rejestracja</string>
+    <string name="logout_tx">Logout</string>
+
+    <!--    Main Buttons    -->
+    <string name="personalData_tx">Dane os.</string>
+    <string name="password_change_tx">Zm. hasła</string>
+    <string name="ankieta_tx">Ankieta</string>
+
+    <!--    Personal data popup     -->
+    <string name="imie_tx">Imię</string>
+    <string name="nazwisko_tx">Nazwisko</string>
+    <string name="nieokreslona_tx">Nieokreślona</string>
+    <string name="mezczyzna_tx">Mężczyzna</string>
+    <string name="kobieta_tx">Kobieta</string>
+    <string name="data_urodzenia_tx">Data urodzenia:</string>
+    <string name="nie_podano_tx">nie podano</string>
+    <string name="wzrost_tx">Wzrost</string>
+    <string name="waga_tx">Waga</string>
+    <string name="pocz_tek_choroby_tx">Początek choroby:</string>
+    <string name="zapisz_tx">Zapisz</string>
+    <string name="cofnij_tx">Cofnij</string>
+
+    <!--    Change password popup    -->
+    <string name="nowe_haslo_tx">Nowe hasło</string>
+    <string name="zmien_haslo_tx">Zmień</string>
+    <string name="anuluj_zmiane_hasla_tx">Anuluj</string>
+
+    <!--    Questions  -->
+    <string name="p1">Jak często w ciągu ostatnich 4 tygodni Pana/i astma powstrzymywała Pana/nią od wykonywania zwykłych czynności w pracy, w szkole/na uczelni lub w domu?</string>
+    <string name="o11">zawsze</string>
+    <string name="o12">bardzo często</string>
+    <string name="o13">czasami</string>
+    <string name="o14">rzadko</string>
+    <string name="o15">wcale</string>
+    <string name="p2">Jak często w ciągu ostatnich 4 tygodni miał/a Pan/i duszności?</string>
+    <string name="o21">częściej niż raz dziennie</string>
+    <string name="o22">raz dziennie</string>
+    <string name="o23">3 do 6 razy w tygodniu</string>
+    <string name="o24">raz lub dwa razy w tygodniu</string>
+    <string name="o25">wcale</string>
+    <string name="p3">Jak często w ciągu ostatnich 4 tygodni budził/a się Pan/i w nocy lub rano, wcześniej niż zwykle, z powodu objawów związanych z astmą (np. świszczący oddech, kaszel, duszności, ucisk lub ból w klatce piersiowej)?</string>
+    <string name="o31">4 noce w tygodniu lub częściej</string>
+    <string name="o32">2 do 3 noce w tygodniu</string>
+    <string name="o33">raz w tygodniu</string>
+    <string name="o34">raz lub dwa</string>
+    <string name="o35">wcale</string>
+    <string name="p4">Jak często w ciągu ostatnich 4 tygodni używał/a Pan/i doraźnie szybko działającego leku doraźnego?</string>
+    <string name="o41">3 razy dziennie lub częściej</string>
+    <string name="o42">1 lub dwa razy dziennie</string>
+    <string name="o43">2 lub 3 razy dziennie</string>
+    <string name="o44">raz w tygodniu</string>
+    <string name="o45">wcale</string>
+    <string name="p5">Jak ocenił/a/by Pan/i swoją kontrolę nad astmą w ciągu ostatnich 4 tygodni?</string>
+    <string name="o51">w ogóle nie kontrolowana</string>
+    <string name="o52">słabo kontrolowana</string>
+    <string name="o53">umiarkowanie kontrolowana</string>
+    <string name="o54">dobrze kontrolowana</string>
+    <string name="o55">w pełni kontrolowana</string>
+
+    <!--    TMP     -->
+    <string name="text_tx">TEXT</string>
+    <!--    No assignment  -->
+
+
 </resources>
