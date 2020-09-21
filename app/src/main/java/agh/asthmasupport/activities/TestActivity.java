@@ -73,10 +73,10 @@ public class TestActivity extends AppCompatActivity {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (o1.isActivated()) pointsCounter += 1;
-                else if (o2.isActivated()) pointsCounter += 2;
-                else if (o2.isActivated()) pointsCounter += 3;
-                else if (o2.isActivated()) pointsCounter += 4;
+                if (o1.isChecked()) pointsCounter += 1;
+                else if (o2.isChecked()) pointsCounter += 2;
+                else if (o3.isChecked()) pointsCounter += 3;
+                else if (o4.isChecked()) pointsCounter += 4;
                 else pointsCounter += 5;
 
                 if (questionIterator == 5) {
@@ -132,6 +132,14 @@ public class TestActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
     }
 
     private void updateCounter(int questionIterator) {

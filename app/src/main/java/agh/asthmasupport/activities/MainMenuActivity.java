@@ -3,6 +3,7 @@ package agh.asthmasupport.activities;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import android.app.DatePickerDialog;
@@ -41,16 +42,19 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
 
     private JsonPlaceHolderApi jsonPlaceHolderApi;
 
-    private CardView cardViewPersonalData, cardViewChangePassword, cardViewTest;
+    private CardView cardViewPersonalData, cardViewAllergies, cardViewTest, cardViewStatistic;
+    private CardView cardViewMedicinesTaken, cardViewMedicinesInfo;
+
+    private TextView predictionTextView;
 
     private AlertDialog.Builder dialogBuilder;
-    private AlertDialog dialog;
+    private AlertDialog dialogPersonalData, dialogChangePassword;
 
     private View personalDataPopupView;
     private EditText nameContent, surnameContent, heightContent, weightContent;
     private RadioGroup radioGroupSex;
     private RadioButton radioButton, radioNo, radioK, radioM;
-    private Button okButton, cancelButton;
+    private Button okButton, cancelButton, changePasswordOptionButton;
     private TextView dateBirth, dateDiseaseStart;
     private String whatDateChanged = null;
     private Integer birthDay = null, birthMonth = null, birthYear = null;
@@ -59,6 +63,9 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
     private View changePasswordPopupView;
     private EditText newPasswordContent;
     private Button changePasswordButton, cancelChangePasswordButton;
+
+    private Boolean medicinesTaken = false;
+    private TextView medicinesMessageContent;
 
 
     @Override
@@ -74,11 +81,12 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
             }
         });
 
-        cardViewChangePassword = (CardView) findViewById(R.id.card_view_change_password);
-        cardViewChangePassword.setOnClickListener(new View.OnClickListener() {
+        cardViewAllergies = (CardView) findViewById(R.id.card_view_allergies);
+        cardViewAllergies.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createChangePasswordDialog();
+                Intent intent = new Intent(MainMenuActivity.this, AllergiesActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -91,7 +99,87 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
             }
         });
 
-        //TODO Imię i nazwisko
+        cardViewStatistic = (CardView) findViewById(R.id.card_view_statistic);
+        cardViewStatistic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainMenuActivity.this, StatisticActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        cardViewMedicinesTaken = (CardView) findViewById(R.id.card_view_medicines_taken);
+        cardViewMedicinesTaken.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(GlobalStorage.baseUrl)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+                jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+
+                Message medicineStateChange = new Message(GlobalStorage.email);
+
+                Call<Message> call = jsonPlaceHolderApi.changeTodaysMedicineTakenState(medicineStateChange);
+                call.enqueue(new Callback<Message>() {
+                    @Override
+                    public void onResponse(Call<Message> call, Response<Message> response) {
+                        if (!response.isSuccessful()) {
+                            toastMessage("Error code: " + response.code());
+                            return;
+                        }
+                        Message message = response.body();
+                        String m = message.getText();
+                        if (m.equals("YES")) {
+                            medicinesTaken = true;
+                            if (medicinesTaken) {
+                                cardViewMedicinesTaken.setCardBackgroundColor(ContextCompat.getColor(MainMenuActivity.this, R.color.green));
+                                medicinesMessageContent.setText("Leki :)");
+                            } else if (!medicinesTaken) {
+                                cardViewMedicinesTaken.setCardBackgroundColor(ContextCompat.getColor(MainMenuActivity.this, R.color.red));
+                                medicinesMessageContent.setText("Leki !!!");
+                            }
+                        } else if (m.equals("NO")) {
+                            medicinesTaken = false;
+                            if (!medicinesTaken) {
+                                cardViewMedicinesTaken.setCardBackgroundColor(ContextCompat.getColor(MainMenuActivity.this, R.color.red));
+                                medicinesMessageContent.setText("Leki !!!");
+                            } else if (medicinesTaken) {
+                                cardViewMedicinesTaken.setCardBackgroundColor(ContextCompat.getColor(MainMenuActivity.this, R.color.green));
+                                medicinesMessageContent.setText("Leki :)");
+                            }
+                        } else {
+                            toastMessage("Wystąpił błąd.\nSpróbuj ponownie.");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Message> call, Throwable t) {
+                        toastMessage("Error: " + t.getMessage());
+                    }
+                });
+            }
+        });
+
+        cardViewMedicinesInfo = (CardView) findViewById(R.id.medicines_list_card);
+        cardViewMedicinesInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainMenuActivity.this, MedicinesActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        medicinesMessageContent = (TextView) findViewById(R.id.medicinesMessageContent);
+        medicinesMessageContent.setText("Leki");
+
+        getInfoMedicinesTakenAndSetColor();
+
+        predictionTextView = (TextView) findViewById(R.id.prediction_text_view);
+        predictionTextView.setText("Na razie brak danych");
+
+        getPrediction();
+
         setTitle(getTitle() + " - " + GlobalStorage.email);
     }
 
@@ -167,7 +255,10 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
                     return;
                 }
                 List<Message> messages = response.body();
-                if (messages.get(0).getText() != null && messages.get(0).getText().equals("Error")) return;
+                if (messages.get(0).getText() != null && messages.get(0).getText().equals("Error")) {
+                    toastMessage("Wystąpił błąd.\nSpróbuj jeszcze raz.");
+                    return;
+                }
                 nameContent.setText(messages.get(0).getText());
                 surnameContent.setText(messages.get(1).getText());
                 String sex = messages.get(2).getText();
@@ -190,8 +281,8 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
         });
 
         dialogBuilder.setView(personalDataPopupView);
-        dialog = dialogBuilder.create();
-        dialog.show();
+        dialogPersonalData = dialogBuilder.create();
+        dialogPersonalData.show();
 
         okButton = (Button) personalDataPopupView.findViewById(R.id.ok_button);
         okButton.setOnClickListener(new View.OnClickListener() {
@@ -239,7 +330,7 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
                         List<Message> messages = response.body();
                         String m = messages.get(0).getText();
                         toastMessage(m);
-                        dialog.dismiss();
+                        dialogPersonalData.dismiss();
                     }
 
                     @Override
@@ -255,7 +346,16 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                dialogPersonalData.dismiss();
+            }
+        });
+
+        changePasswordOptionButton = (Button) personalDataPopupView.findViewById(R.id.change_password_option_button);
+        changePasswordOptionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createChangePasswordDialog();
+                dialogPersonalData.dismiss();
             }
         });
 
@@ -331,11 +431,10 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
 
                         if (m1.equals("Zmieniono")) {
                             toastMessage(m1);
-                            dialog.dismiss();
+                            dialogChangePassword.dismiss();
                         } else if (m1.equals("Error")) {
                             toastMessage(m1);
                         } else {
-                            //TODO Internet connection
                             toastMessage("Failure. Try again or contact administrator.");
                         }
                     }
@@ -353,13 +452,84 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
         cancelChangePasswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                dialogChangePassword.dismiss();
             }
         });
 
         dialogBuilder.setView(changePasswordPopupView);
-        dialog = dialogBuilder.create();
-        dialog.show();
+        dialogChangePassword = dialogBuilder.create();
+        dialogChangePassword.show();
+    }
+
+    private void getInfoMedicinesTakenAndSetColor() {
+        Message emailMess = new Message(GlobalStorage.email);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(GlobalStorage.baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+        Call<Message> call = jsonPlaceHolderApi.getColorMedicinesCard(emailMess);
+        call.enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                if (!response.isSuccessful()) {
+                    toastMessage("Error code: " + response.code());
+                    return;
+                }
+                Message message = response.body();
+                String m = message.getText();
+                if (m.equals("NO")) {
+                    medicinesTaken = false;
+                    cardViewMedicinesTaken.setCardBackgroundColor(ContextCompat.getColor(MainMenuActivity.this, R.color.red));
+                    medicinesMessageContent.setText("Leki !!!");
+                } else if (m.equals("YES")) {
+                    medicinesTaken = true;
+                    cardViewMedicinesTaken.setCardBackgroundColor(ContextCompat.getColor(MainMenuActivity.this, R.color.green));
+                    medicinesMessageContent.setText("Leki :)");
+                } else {
+                    getInfoMedicinesTakenAndSetColor();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
+                toastMessage("Error: " + t.getMessage());
+            }
+        });
+    }
+
+    private void getPrediction() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(GlobalStorage.baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+
+        Message email = new Message(GlobalStorage.email);
+
+        Call<Message> call = jsonPlaceHolderApi.getPrediction(email);
+        call.enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                if (!response.isSuccessful()) {
+                    toastMessage("Error code: " + response.code());
+                    return;
+                }
+                Message message = response.body();
+                String value = message.getText();
+                if (value.equals("fail")) {
+                    toastMessage("Nie udało się pobrać danych o przyszłym stanie zdrowia.");
+                } else {
+                    predictionTextView.setText(value);
+//                    toastMessage(value);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
+                toastMessage("Error: " + t.getMessage());
+            }
+        });
     }
 
     // INFO: Custom toast message

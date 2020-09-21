@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="100">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="70">
+
+        <TextView
+            android:id="@+id/date_content"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_weight="70"
+            android:gravity="center"
+            android:text="@string/data"
+            android:textAlignment="center" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="70">
+
+            <TextView
+                android:id="@+id/points_content"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:text="@string/_25"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_weight="70"/>
+
+            <TextView
+                android:id="@+id/implemented_content"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_weight="30"
+                android:gravity="center"
+                android:text="@string/przyj_te"
+                android:textAlignment="center" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="70">
+
+        <TextView
+            android:id="@+id/rain_content"
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:gravity="center"
+            android:text="@string/du_y"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/wind_content"
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:gravity="center"
+            android:text="@string/mocny"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/temperature_content"
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:gravity="center"
+            android:text="@string/_25_st_c"
+            android:textAlignment="center" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="70">
+<!--        android:layout_height="78dp"-->
+
+        <TextView
+            android:id="@+id/dusting_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/brzoza_3_nbrzoza_3_nbrzoza_3_nbrzoza_3_n"
+            android:textAlignment="center" />
+<!--            android:layout_height="78dp"-->
+    </ScrollView>
+
+</LinearLayout>

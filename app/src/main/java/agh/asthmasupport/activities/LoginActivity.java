@@ -29,31 +29,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginNameButton, registerButton;
     private EditText loginName_textField, password_textField;
     private JsonPlaceHolderApi jsonPlaceHolderApi;
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//
-////        TODO
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.server_settings_menu, menu);
-//
-//        return true;
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-////        TODO
-//        switch (item.getItemId()){
-//            case R.id.logout_option:
-//                //TODO
-////                Intent serverSettingsIntent = new Intent(LoginActivity.this, SettingsServerActivity.class);
-////                startActivity(serverSettingsIntent);
-//                toastMessage("OK: se_se_item1 clicked.");
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//    }
+    int atempt;
+    Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +42,9 @@ public class LoginActivity extends AppCompatActivity {
         loginName_textField = (EditText) findViewById(R.id.username);
         password_textField = (EditText) findViewById(R.id.password);
 
-        // TODO: temporary input
-        loginName_textField.setText("user17@gmail.com");
-        password_textField.setText("password");
+        // DONE: temporary input
+//        loginName_textField.setText("dominik@gmail.com");
+//        password_textField.setText("password");
 
         loginNameButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,28 +53,28 @@ public class LoginActivity extends AppCompatActivity {
                 GlobalStorage.password = password_textField.getText().toString();
 
                 try {
+                    atempt = 1;
                     login();
                 } catch (Exception ex) {
                     toastMessage("Wystąpił problem z logowaniem.");
                 }
-             }
+            }
         });
 
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    GlobalStorage.email = loginName_textField.getText().toString();
-                    GlobalStorage.password = password_textField.getText().toString();
+                GlobalStorage.email = loginName_textField.getText().toString();
+                GlobalStorage.password = password_textField.getText().toString();
 
-                    try {
-                        register();
-                    } catch (Exception ex) {
-                        toastMessage("Wystąpił problem z rejestracją.");
-                    }
+                try {
+                    atempt = 1;
+                    register();
                 } catch (Exception ex) {
+                    toastMessage("Wystąpił problem z rejestracją.");
                 }
+
             }
         });
     }
@@ -111,7 +88,19 @@ public class LoginActivity extends AppCompatActivity {
 
         Message message = new Message(GlobalStorage.email);
 
-        toastMessage("Logowanie . . .");
+        int d = 150;
+        if (atempt % d == 0) {
+            String s = "Logowanie ";
+            for (int i = atempt/d; i > 1; i--) {
+                s += ". ";
+            }
+            if (toast != null) {
+                toast.cancel();
+            }
+            toast = Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT);
+            toast.show();
+        }
+
         Call<List<Message>> call = jsonPlaceHolderApi.getPasswordHash(message);
         call.enqueue(new Callback<List<Message>>() {
             @Override
@@ -127,17 +116,28 @@ public class LoginActivity extends AppCompatActivity {
                 if (hash1.equals("")) {
                     toastMessage("Nie ma takiego użytkownika.");
                 } else if (BCryptOperations.isValid(GlobalStorage.password, hash1)) {
-                    toastMessage("Zalogowano");
+                    addMissingMedicineEventsAndTestsRequest(GlobalStorage.email);
                     Intent intent = new Intent(LoginActivity.this, MainMenuActivity.class);
                     startActivity(intent);
                 } else {
                     toastMessage("Złe hasło.");
                 }
+                atempt = 1;
             }
 
             @Override
             public void onFailure(Call<List<Message>> call, Throwable t) {
-                toastMessage("Error: " + t.getMessage());
+                if (atempt < 4000) {
+                    atempt += 1;
+//                    Toast.makeText(getApplicationContext(), atempt, Toast.LENGTH_SHORT).show();
+                    login();
+                } else {
+                    toastMessage("Wystąpił błąd. Sprawdź połączenie z internetem.");
+                    if (toast != null) {
+                        toast.cancel();
+                    }
+                }
+
             }
         });
 
@@ -164,6 +164,22 @@ public class LoginActivity extends AppCompatActivity {
         }
         String encryptedPassword = BCryptOperations.generateHashedPass(password);
         UserCredentials userCredentials = new UserCredentials(email, encryptedPassword);
+
+//        int d = 1;
+//        if (atempt % d == 0) {
+//            String s = "Rejestracja ";
+//            for (int i = atempt/d; i > 1; i--) {
+//                s += ". ";
+//            }
+//            if (toast != null) {
+//                toast.cancel();
+//            }
+//            toast = Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT);
+//            toast.show();
+//        }
+
+        Toast.makeText(getApplicationContext(), "Rejestracja", Toast.LENGTH_SHORT).show();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(GlobalStorage.baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -177,16 +193,14 @@ public class LoginActivity extends AppCompatActivity {
                     toastMessage("Error code: " + response.code());
                     return;
                 }
-
                 List<Message> messages = response.body();
                 String m1 = messages.get(0).getText();
-
                 if (m1.equals("Taken")) {
                     toastMessage("Somebody is already using this email");
                 } else if (m1.equals("Success")) {
                     toastMessage("Success. You can log in now.");
+                    addFirstMedicineEventAndTestRequest(GlobalStorage.email);
                 } else if (m1.equals("Failure")) {
-                    //TODO Internet connection
                     toastMessage("Failure. Try again or contact administrator.");
                 } else {
                     toastMessage("Unknown error");
@@ -195,6 +209,69 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Message>> call, Throwable t) {
+                if (atempt < 4) {
+                    atempt += 1;
+//                    Toast.makeText(getApplicationContext(), atempt, Toast.LENGTH_SHORT).show();
+                    register();
+                } else {
+                    toastMessage("Wystąpił błąd. Sprawdź połączenie z internetem.");
+                    if (toast != null) {
+                        toast.cancel();
+                    }
+                }
+            }
+        });
+    }
+
+    private void addMissingMedicineEventsAndTestsRequest(String email) {
+        Message emailMessage = new Message(email);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(GlobalStorage.baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+        Call<Message> call = jsonPlaceHolderApi.addMissingMedicineEventsAndTests(emailMessage);
+        call.enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                if (!response.isSuccessful()) {
+                    toastMessage("Error code: " + response.code());
+                    return;
+                }
+                Message messages = response.body();
+                String m = messages.getText();
+                // toastMessage(m);
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
+                toastMessage("Error: " + t.getMessage());
+            }
+        });
+    }
+
+    private void addFirstMedicineEventAndTestRequest(String email) {
+        Message emailMessage = new Message(email);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(GlobalStorage.baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+        Call<Message> call = jsonPlaceHolderApi.addFirstMedicineEventAndTest(emailMessage);
+        call.enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                if (!response.isSuccessful()) {
+                    toastMessage("Error code: " + response.code());
+                    return;
+                }
+//                Message messages = response.body();
+//                String m = messages.getText();
+//                toastMessage(m);
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
                 toastMessage("Error: " + t.getMessage());
             }
         });

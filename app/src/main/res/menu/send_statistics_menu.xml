@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<item android:id="@+id/statistics_send_email"
+    android:icon="@drawable/ic_statistics_send"
+    android:title="@string/wy_lij_swoje_statystyki"
+    app:showAsAction="ifRoom" />
+
+</menu>

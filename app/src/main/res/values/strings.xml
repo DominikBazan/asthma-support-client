@@ -1,7 +1,7 @@
 <resources>
     <!--    Overall     -->
-    <string name="app_name">AsthmaSupport</string>
-    <string name="systemName_tx">AsthmaSupport 1.0</string>
+    <string name="app_name">ASTRA</string>
+    <string name="systemName_tx">ASTRA</string>
 
     <!--    Login   -->
     <string name="userName_tx">Nazwa użytkownika</string>
@@ -14,6 +14,7 @@
     <string name="personalData_tx">Dane os.</string>
     <string name="password_change_tx">Zm. hasła</string>
     <string name="ankieta_tx">Ankieta</string>
+    <string name="statystyki_tx">Statystyki</string>
 
     <!--    Personal data popup     -->
     <string name="imie_tx">Imię</string>
@@ -53,7 +54,7 @@
     <string name="o33">raz w tygodniu</string>
     <string name="o34">raz lub dwa</string>
     <string name="o35">wcale</string>
-    <string name="p4">Jak często w ciągu ostatnich 4 tygodni używał/a Pan/i doraźnie szybko działającego leku doraźnego?</string>
+    <string name="p4">Jak często w ciągu ostatnich 4 tygodni używał/a Pan/i szybko działającego leku doraźnego?</string>
     <string name="o41">3 razy dziennie lub częściej</string>
     <string name="o42">1 lub dwa razy dziennie</string>
     <string name="o43">2 lub 3 razy dziennie</string>
@@ -68,6 +69,36 @@
 
     <!--    TMP     -->
     <string name="text_tx">TEXT</string>
+
+    <!--    RODO    -->
+    <string name="rodo_tx">
+        Naciśnięcie przycisku REJESTRACJA oznacza wyrażenie zgody na przechowywanie i przetwarzanie danych wprowadzanych do systemu zgodnie z Zasadami Ochrony Danych Osobowych zbieranych w systemie opracowanymi w zgodzie z RODO.\n\n
+        Zasady Ochrony Danych Osobowych zbieranych w systemie:\n
+        1. Administratorem danych osobowych w systemie jest jej twórca, tzn. Dominik Bazan.\n
+        2. Podanie danych osobowych jest koniecznym wymogiem poprawnego działania systemu.\n
+        3. Dane będą przetwarzane w sposób zautomatyzowany w celu umożliwienia działania funkcji aplikacji.\n
+        4. Dane osobowe będą przechowywane do czasu odwołania zgody przez użytkowników na ich przechowywanie lub zakończenia użytkowania systemu.\n
+        5. Posiadają Państwo prawo dostępu do treści swoich danych oraz prawo do ich sprostowania i usunięcia, a także prawo do cofnięcia zgody w dowolnym momencie na ich przechowywanie i przetwarzanie.\n
+        6. Mają Państwo prawo wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych w zakresie naruszenia prawa do ochrony danych osobowych lub innych praw przyznanych na mocy RODO.
+    </string>
+    <string name="data">Data</string>
+    <string name="_25">25</string>
+    <string name="przyj_te">Przyjęte</string>
+    <string name="du_y">Duży</string>
+    <string name="mocny">Mocny</string>
+    <string name="_25_st_c">25 st.C</string>
+    <string name="brzoza_3_nbrzoza_3_nbrzoza_3_nbrzoza_3_n">Brzoza 3 Brzoza 3 Brzoza 3 Brzoza 3</string>
+    <string name="nazwa_nowej_alergii">Nazwa nowej alergii</string>
+    <string name="dodaj">Dodaj</string>
+    <string name="anuluj">Anuluj</string>
+    <string name="nazwa_nowego_leku">Nazwa nowego leku</string>
+    <string name="dodaj">Dodaj</string>
+    <string name="anuluj">Anuluj</string>
+    <string name="tu_wprwadz_email_nna_kt_ry_wysy_asz_swoje_statystyki_nuwa_aj_komu_je_udost_pniasz">Tu wprwadz email, na który wysyłasz swoje statystyki. Uważaj komu je udostępniasz!:</string>
+    <string name="xxxxx_poczta_com">xxxxx@poczta.com</string>
+    <string name="udost_pnij">Udostępnij</string>
+    <string name="wy_lij_swoje_statystyki">Wyślij swoje statystyki</string>
+
     <!--    No assignment  -->
 
 

@@ -13,7 +13,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activities.TestActivity"></activity>
+        <activity android:name=".activities.AllergiesActivity"></activity>
+        <activity android:name=".activities.MedicinesActivity" />
+        <activity android:name=".activities.StatisticActivity" />
+        <activity android:name=".activities.TestActivity" />
         <activity android:name=".activities.MainMenuActivity" />
         <activity
             android:name=".activities.LoginActivity"

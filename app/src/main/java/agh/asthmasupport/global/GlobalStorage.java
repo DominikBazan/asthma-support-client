@@ -13,4 +13,8 @@ public class GlobalStorage {
     public static String email;
     public static String password;
 
+    public static void log(String value) {
+        System.out.println(value);
+    }
+
 }

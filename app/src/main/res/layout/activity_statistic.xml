@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.StatisticActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/listViewHeader">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="70"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/date_content"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_weight="70"
+                android:gravity="center"
+                android:text="Data"
+                android:textAlignment="center"
+                android:textStyle="bold"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="70"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/points_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_weight="70"
+                    android:gravity="center"
+                    android:text="Stan"
+                    android:textAlignment="center"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/implemented_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_weight="30"
+                    android:gravity="center"
+                    android:text="Leki przyjęte"
+                    android:textAlignment="center"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="70"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/rain_content"
+                android:layout_width="match_parent"
+                android:layout_height="26dp"
+                android:gravity="center"
+                android:text="Deszcz [mm]"
+                android:textAlignment="center"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/wind_content"
+                android:layout_width="match_parent"
+                android:layout_height="26dp"
+                android:gravity="center"
+                android:text="Wiatr [m/s]"
+                android:textAlignment="center"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/temperature_content"
+                android:layout_width="match_parent"
+                android:layout_height="26dp"
+                android:gravity="center"
+                android:text="Temp. [st.C]"
+                android:textAlignment="center"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/dusting_content"
+            android:layout_width="match_parent"
+            android:layout_height="78dp"
+            android:layout_weight="70"
+            android:gravity="center"
+            android:text="Pylenia\n[0/1/2/3]"
+            android:textAlignment="center"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+
+    <ListView
+        android:id="@+id/list_stat"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="78dp"
+        android:background="@color/listViewContent"/>
+
+</RelativeLayout>
+
+
