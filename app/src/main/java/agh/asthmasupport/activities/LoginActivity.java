@@ -17,6 +17,7 @@ import agh.asthmasupport.communication.JsonPlaceHolderApi;
 import agh.asthmasupport.communication.objects.Message;
 import agh.asthmasupport.communication.objects.UserCredentials;
 import agh.asthmasupport.global.BCryptOperations;
+import agh.asthmasupport.global.Encryption;
 import agh.asthmasupport.global.GlobalStorage;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -163,20 +164,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
         String encryptedPassword = BCryptOperations.generateHashedPass(password);
-        UserCredentials userCredentials = new UserCredentials(email, encryptedPassword);
-
-//        int d = 1;
-//        if (atempt % d == 0) {
-//            String s = "Rejestracja ";
-//            for (int i = atempt/d; i > 1; i--) {
-//                s += ". ";
-//            }
-//            if (toast != null) {
-//                toast.cancel();
-//            }
-//            toast = Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT);
-//            toast.show();
-//        }
+        UserCredentials userCredentials = new UserCredentials(Encryption.encrypt(email), encryptedPassword);
 
         Toast.makeText(getApplicationContext(), "Rejestracja", Toast.LENGTH_SHORT).show();
 
