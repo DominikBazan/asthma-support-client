@@ -10,7 +10,6 @@ import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -23,6 +22,7 @@ import agh.asthmasupport.R;
 import agh.asthmasupport.communication.JsonPlaceHolderApi;
 import agh.asthmasupport.communication.objects.DailyStatistics;
 import agh.asthmasupport.communication.objects.Message;
+import agh.asthmasupport.global.Encryption;
 import agh.asthmasupport.global.GlobalStorage;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,7 +60,7 @@ public class StatisticActivity extends AppCompatActivity {
 
         context = this;
 
-        Message emailMessage = new Message(GlobalStorage.email);
+        Message emailMessage = new Message(Encryption.encrypt(GlobalStorage.email));
 
         Call<ArrayList<DailyStatistics>> call = jsonPlaceHolderApi.getStatistics(emailMessage);
         call.enqueue(new Callback<ArrayList<DailyStatistics>>() {
@@ -71,6 +71,7 @@ public class StatisticActivity extends AppCompatActivity {
                     return;
                 }
                 ArrayList<DailyStatistics> dailyStats = response.body();
+                Encryption.decryptArrayListOfDailyStatistics(dailyStats);
                 for (DailyStatistics ds : dailyStats) {
                     if (ds.getImplemented().equals("1")) ds.setImplemented("TAK");
                     else if (ds.getImplemented().equals("0")) ds.setImplemented("NIE");
@@ -138,7 +139,7 @@ public class StatisticActivity extends AppCompatActivity {
                         .build();
                 jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
-                final Message emailMessage = new Message(GlobalStorage.email);
+                final Message emailMessage = new Message(Encryption.encrypt(GlobalStorage.email));
 
                 Call<ArrayList<DailyStatistics>> call = jsonPlaceHolderApi.getStatistics(emailMessage);
                 call.enqueue(new Callback<ArrayList<DailyStatistics>>() {
@@ -149,6 +150,7 @@ public class StatisticActivity extends AppCompatActivity {
                             return;
                         }
                         ArrayList<DailyStatistics> dailyStats = response.body();
+                        Encryption.decryptArrayListOfDailyStatistics(dailyStats);
                         StringBuilder sb = new StringBuilder();
                         for (DailyStatistics ds : dailyStats) {
                             sb.append("Data: " + ds.getDate()+"\t");

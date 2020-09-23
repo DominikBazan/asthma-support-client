@@ -44,8 +44,8 @@ public class LoginActivity extends AppCompatActivity {
         password_textField = (EditText) findViewById(R.id.password);
 
         // DONE: temporary input
-//        loginName_textField.setText("dominik@gmail.com");
-//        password_textField.setText("password");
+        // loginName_textField.setText("dominik@gmail.com");
+        // password_textField.setText("password");
 
         loginNameButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
-        Message message = new Message(GlobalStorage.email);
+        Message message = new Message(Encryption.encrypt(GlobalStorage.email));
 
         int d = 150;
         if (atempt % d == 0) {
@@ -112,12 +112,12 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 List<Message> messages = response.body();
-                String hash1 = messages.get(0).getText();
+                String hash1 = Encryption.decrypt(messages.get(0).getText());
 
                 if (hash1.equals("")) {
                     toastMessage("Nie ma takiego użytkownika.");
                 } else if (BCryptOperations.isValid(GlobalStorage.password, hash1)) {
-                    addMissingMedicineEventsAndTestsRequest(GlobalStorage.email);
+                    addMissingMedicineEventsAndTestsRequest(Encryption.encrypt(GlobalStorage.email));
                     Intent intent = new Intent(LoginActivity.this, MainMenuActivity.class);
                     startActivity(intent);
                 } else {
@@ -164,7 +164,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
         String encryptedPassword = BCryptOperations.generateHashedPass(password);
-        UserCredentials userCredentials = new UserCredentials(Encryption.encrypt(email), encryptedPassword);
+        UserCredentials userCredentials = new UserCredentials(Encryption.encrypt(email), Encryption.encrypt(encryptedPassword));
 
         Toast.makeText(getApplicationContext(), "Rejestracja", Toast.LENGTH_SHORT).show();
 
@@ -182,12 +182,12 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
                 List<Message> messages = response.body();
-                String m1 = messages.get(0).getText();
+                String m1 = Encryption.decrypt(messages.get(0).getText());
                 if (m1.equals("Taken")) {
                     toastMessage("Somebody is already using this email");
                 } else if (m1.equals("Success")) {
                     toastMessage("Success. You can log in now.");
-                    addFirstMedicineEventAndTestRequest(GlobalStorage.email);
+                    addFirstMedicineEventAndTestRequest(Encryption.encrypt(GlobalStorage.email));
                 } else if (m1.equals("Failure")) {
                     toastMessage("Failure. Try again or contact administrator.");
                 } else {
@@ -226,9 +226,9 @@ public class LoginActivity extends AppCompatActivity {
                     toastMessage("Error code: " + response.code());
                     return;
                 }
-                Message messages = response.body();
-                String m = messages.getText();
-                // toastMessage(m);
+//                Message messages = response.body();
+//                String m = Encryption.decrypt(messages.getText());
+//                toastMessage(m);
             }
 
             @Override
@@ -254,7 +254,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 //                Message messages = response.body();
-//                String m = messages.getText();
+//                String m = Encryption.decrypt(messages.getText());
 //                toastMessage(m);
             }
 

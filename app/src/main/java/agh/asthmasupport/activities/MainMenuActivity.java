@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import agh.asthmasupport.communication.objects.UserCredentials;
 import agh.asthmasupport.communication.objects.UserData;
 import agh.asthmasupport.global.BCryptOperations;
 import agh.asthmasupport.global.DatePickerFragment;
+import agh.asthmasupport.global.Encryption;
 import agh.asthmasupport.global.GlobalStorage;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -118,7 +120,7 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
                         .build();
                 jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
-                Message medicineStateChange = new Message(GlobalStorage.email);
+                Message medicineStateChange = new Message(Encryption.encrypt(GlobalStorage.email));
 
                 Call<Message> call = jsonPlaceHolderApi.changeTodaysMedicineTakenState(medicineStateChange);
                 call.enqueue(new Callback<Message>() {
@@ -129,7 +131,7 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
                             return;
                         }
                         Message message = response.body();
-                        String m = message.getText();
+                        String m = Encryption.decrypt(message.getText());
                         if (m.equals("YES")) {
                             medicinesTaken = true;
                             if (medicinesTaken) {
@@ -244,21 +246,23 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
                 .build();
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
-        Message emailMessage = new Message(GlobalStorage.email);
+        Message emailMessage = new Message(Encryption.encrypt(GlobalStorage.email));
 
-        Call<List<Message>> call = jsonPlaceHolderApi.getUserData(emailMessage);
-        call.enqueue(new Callback<List<Message>>() {
+        Call<ArrayList<Message>> call = jsonPlaceHolderApi.getUserData(emailMessage);
+        call.enqueue(new Callback<ArrayList<Message>>() {
             @Override
-            public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+            public void onResponse(Call<ArrayList<Message>> call, Response<ArrayList<Message>> response) {
                 if (!response.isSuccessful()) {
                     toastMessage("Error code: " + response.code());
                     return;
                 }
-                List<Message> messages = response.body();
-                if (messages.get(0).getText() != null && messages.get(0).getText().equals("Error")) {
+                ArrayList<Message> messages = response.body();
+                String m0 = Encryption.decrypt(messages.get(0).getText());
+                if (m0 != null && m0.equals("ERROR")) {
                     toastMessage("Wystąpił błąd.\nSpróbuj jeszcze raz.");
                     return;
                 }
+                Encryption.decryptArrayListOfMessages(messages);
                 nameContent.setText(messages.get(0).getText());
                 surnameContent.setText(messages.get(1).getText());
                 String sex = messages.get(2).getText();
@@ -275,7 +279,7 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
             }
 
             @Override
-            public void onFailure(Call<List<Message>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<Message>> call, Throwable t) {
                 toastMessage("Error: " + t.getMessage());
             }
         });
@@ -315,8 +319,10 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
                         .build();
                 jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
-                UserData userData = new UserData(name, surname, sex, GlobalStorage.email,
-                        dateBirth, height, weight, dStartDisease);
+                UserData userData = new UserData(Encryption.encrypt(name), Encryption.encrypt(surname),
+                        Encryption.encrypt(sex), Encryption.encrypt(GlobalStorage.email),
+                        Encryption.encrypt(dateBirth), Encryption.encrypt(height),
+                        Encryption.encrypt(weight), Encryption.encrypt(dStartDisease));
 
                 toastMessage("Zapisywanie . . .");
                 Call<List<Message>> call = jsonPlaceHolderApi.updateUserData(userData);
@@ -328,7 +334,7 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
                             return;
                         }
                         List<Message> messages = response.body();
-                        String m = messages.get(0).getText();
+                        String m = Encryption.decrypt(messages.get(0).getText());
                         toastMessage(m);
                         dialogPersonalData.dismiss();
                     }
@@ -411,7 +417,7 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
                     return;
                 }
                 String encryptedPassword = BCryptOperations.generateHashedPass(newPassword);
-                UserCredentials user = new UserCredentials(GlobalStorage.email, encryptedPassword);
+                UserCredentials user = new UserCredentials(Encryption.encrypt(GlobalStorage.email), Encryption.encrypt(encryptedPassword));
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(GlobalStorage.baseUrl)
                         .addConverterFactory(GsonConverterFactory.create())
@@ -427,7 +433,7 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
                         }
 
                         List<Message> messages = response.body();
-                        String m1 = messages.get(0).getText();
+                        String m1 = Encryption.decrypt(messages.get(0).getText());
 
                         if (m1.equals("Zmieniono")) {
                             toastMessage(m1);
@@ -462,7 +468,7 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
     }
 
     private void getInfoMedicinesTakenAndSetColor() {
-        Message emailMess = new Message(GlobalStorage.email);
+        Message emailMess = new Message(Encryption.encrypt(GlobalStorage.email));
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(GlobalStorage.baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -477,7 +483,7 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
                     return;
                 }
                 Message message = response.body();
-                String m = message.getText();
+                String m = Encryption.decrypt(message.getText());
                 if (m.equals("NO")) {
                     medicinesTaken = false;
                     cardViewMedicinesTaken.setCardBackgroundColor(ContextCompat.getColor(MainMenuActivity.this, R.color.red));
@@ -505,7 +511,7 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
                 .build();
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
-        Message email = new Message(GlobalStorage.email);
+        Message email = new Message(Encryption.encrypt(GlobalStorage.email));
 
         Call<Message> call = jsonPlaceHolderApi.getPrediction(email);
         call.enqueue(new Callback<Message>() {
@@ -516,7 +522,7 @@ public class MainMenuActivity extends AppCompatActivity implements DatePickerDia
                     return;
                 }
                 Message message = response.body();
-                String value = message.getText();
+                String value = Encryption.decrypt(message.getText());
                 if (value.equals("fail")) {
                     toastMessage("Nie udało się pobrać danych o przyszłym stanie zdrowia.");
                 } else {

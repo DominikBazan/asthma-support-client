@@ -21,6 +21,7 @@ import agh.asthmasupport.communication.JsonPlaceHolderApi;
 import agh.asthmasupport.communication.objects.Message;
 import agh.asthmasupport.communication.objects.TestResult;
 import agh.asthmasupport.communication.objects.UserCredentials;
+import agh.asthmasupport.global.Encryption;
 import agh.asthmasupport.global.GlobalStorage;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -81,7 +82,7 @@ public class TestActivity extends AppCompatActivity {
 
                 if (questionIterator == 5) {
                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                    TestResult testResult = new TestResult(GlobalStorage.email, Integer.toString(pointsCounter),  df.format(new Date()));
+                    TestResult testResult = new TestResult(Encryption.encrypt(GlobalStorage.email), Encryption.encrypt(Integer.toString(pointsCounter)),  Encryption.encrypt(df.format(new Date())));
                     Retrofit retrofit = new Retrofit.Builder()
                             .baseUrl(GlobalStorage.baseUrl)
                             .addConverterFactory(GsonConverterFactory.create())
@@ -97,7 +98,7 @@ public class TestActivity extends AppCompatActivity {
                             }
 
                             List<Message> messages = response.body();
-                            String m1 = messages.get(0).getText();
+                            String m1 = Encryption.decrypt(messages.get(0).getText());
 
                             if (m1.equals("Zapisano wynik")) {
                                 toastMessage("Wyniki zapisane");

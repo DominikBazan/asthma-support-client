@@ -22,12 +22,6 @@ import retrofit2.http.POST;
 
 public interface JsonPlaceHolderApi {
 
-//    @GET("testingContents")
-//    Call<List<ConnectionTest1>> getTestingContents();
-
-    @POST("loginRequest")
-    Call<List<Message>> loginUser(@Body UserCredentials user);
-
     @POST("registerRequest")
     Call<List<Message>> registerUser(@Body UserCredentials user);
 
@@ -35,7 +29,7 @@ public interface JsonPlaceHolderApi {
     Call<List<Message>> getPasswordHash(@Body Message email);
 
     @POST("getUserData")
-    Call<List<Message>> getUserData(@Body Message email);
+    Call<ArrayList<Message>> getUserData(@Body Message email);
 
     @POST("updateUserData")
     Call<List<Message>> updateUserData(@Body UserData email);
@@ -87,7 +81,5 @@ public interface JsonPlaceHolderApi {
 
     @POST("getAllAsthmaFactors")
     Call<ArrayList<Message>> getAllAsthmaFactors(@Body Message email);
-
-
 
 }

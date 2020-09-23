@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import agh.asthmasupport.R;
 import agh.asthmasupport.communication.JsonPlaceHolderApi;
 import agh.asthmasupport.communication.objects.AllergiesNamesToDelete;
-import agh.asthmasupport.communication.objects.Allergy;
 import agh.asthmasupport.communication.objects.Message;
 import agh.asthmasupport.communication.objects.NewAllergy;
+import agh.asthmasupport.global.Encryption;
 import agh.asthmasupport.global.GlobalStorage;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,7 +65,7 @@ public class AllergiesActivity extends AppCompatActivity implements AdapterView.
 
         context = this;
 
-        Message emailMessage = new Message(GlobalStorage.email);
+        Message emailMessage = new Message(Encryption.encrypt(GlobalStorage.email));
 
         Call<ArrayList<Message>> call = jsonPlaceHolderApi.getUsersAllergies(emailMessage);
         call.enqueue(new Callback<ArrayList<Message>>() {
@@ -76,6 +76,7 @@ public class AllergiesActivity extends AppCompatActivity implements AdapterView.
                     return;
                 }
                 ArrayList<Message> allergies = response.body();
+                Encryption.decryptArrayListOfMessages(allergies);
                 for (Message m : allergies) {
                     itemList.add(m.getText());
                 }
@@ -151,7 +152,7 @@ public class AllergiesActivity extends AppCompatActivity implements AdapterView.
                     dialog.dismiss();
                     return;
                 }
-                NewAllergy newAll = new NewAllergy(chosenAllergy, GlobalStorage.email);
+                NewAllergy newAll = new NewAllergy(Encryption.encrypt(chosenAllergy), Encryption.encrypt(GlobalStorage.email));
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(GlobalStorage.baseUrl)
                         .addConverterFactory(GsonConverterFactory.create())
@@ -211,7 +212,7 @@ public class AllergiesActivity extends AppCompatActivity implements AdapterView.
 
         context = this;
 
-        Message emailMessage = new Message(GlobalStorage.email);
+        Message emailMessage = new Message(Encryption.encrypt(GlobalStorage.email));
 
         Call<ArrayList<Message>> call = jsonPlaceHolderApi.getAllAsthmaFactors(emailMessage);
         call.enqueue(new Callback<ArrayList<Message>>() {
@@ -242,7 +243,7 @@ public class AllergiesActivity extends AppCompatActivity implements AdapterView.
                 .build();
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
-        AllergiesNamesToDelete allergiesNamesToDelete = new AllergiesNamesToDelete(GlobalStorage.email, allergiesToDelete);
+        AllergiesNamesToDelete allergiesNamesToDelete = new AllergiesNamesToDelete(Encryption.encrypt(GlobalStorage.email), allergiesToDelete);
 
         Call<Message> call = jsonPlaceHolderApi.deleteAllergiesUsed(allergiesNamesToDelete);
         call.enqueue(new Callback<Message>() {

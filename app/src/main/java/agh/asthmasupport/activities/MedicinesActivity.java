@@ -26,6 +26,7 @@ import agh.asthmasupport.communication.objects.Medicine;
 import agh.asthmasupport.communication.objects.MedicinesNamesToDelete;
 import agh.asthmasupport.communication.objects.Message;
 import agh.asthmasupport.communication.objects.NewMedicine;
+import agh.asthmasupport.global.Encryption;
 import agh.asthmasupport.global.GlobalStorage;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -86,7 +87,7 @@ public class MedicinesActivity extends AppCompatActivity {
 
         context = this;
 
-        Message emailMessage = new Message(GlobalStorage.email);
+        Message emailMessage = new Message(Encryption.encrypt(GlobalStorage.email));
 
         Call<ArrayList<Medicine>> call = jsonPlaceHolderApi.getMedicines(emailMessage);
         call.enqueue(new Callback<ArrayList<Medicine>>() {
@@ -97,6 +98,7 @@ public class MedicinesActivity extends AppCompatActivity {
                     return;
                 }
                 ArrayList<Medicine> medicines = response.body();
+                Encryption.decryptArrayListOfMedicines(medicines);
                 for (Medicine m : medicines) {
                     itemList.add(m.getMedicineName());
                 }
@@ -167,7 +169,7 @@ public class MedicinesActivity extends AppCompatActivity {
                     dialog.dismiss();
                     return;
                 }
-                NewMedicine newMed = new NewMedicine(newMedicine, GlobalStorage.email);
+                NewMedicine newMed = new NewMedicine(Encryption.encrypt(newMedicine), Encryption.encrypt(GlobalStorage.email));
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(GlobalStorage.baseUrl)
                         .addConverterFactory(GsonConverterFactory.create())
@@ -182,7 +184,7 @@ public class MedicinesActivity extends AppCompatActivity {
                             return;
                         }
                         // Message messages = response.body();
-                        // String m = messages.getText();
+                        // String m = Encryption.decrypt(messages.getText());
                         dialog.dismiss();
                         itemList.add(newMedicine);
                         adapter.notifyDataSetChanged();
@@ -210,7 +212,7 @@ public class MedicinesActivity extends AppCompatActivity {
     }
 
     private void deleteMedicinesFromList(ArrayList<String> medicinesToDelete) {
-        MedicinesNamesToDelete medicinesNamesToDelete = new MedicinesNamesToDelete(GlobalStorage.email, medicinesToDelete);
+        MedicinesNamesToDelete medicinesNamesToDelete = new MedicinesNamesToDelete(Encryption.encrypt(GlobalStorage.email), medicinesToDelete);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(GlobalStorage.baseUrl)
@@ -242,7 +244,7 @@ public class MedicinesActivity extends AppCompatActivity {
                 .build();
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
-        ChangeDosage changeDosage = new ChangeDosage(GlobalStorage.email, Integer.toString(mode));
+        ChangeDosage changeDosage = new ChangeDosage(Encryption.encrypt(GlobalStorage.email), Encryption.encrypt(Integer.toString(mode)));
 
         Call<Message> call = jsonPlaceHolderApi.changeDosage(changeDosage);
         call.enqueue(new Callback<Message>() {
@@ -253,7 +255,7 @@ public class MedicinesActivity extends AppCompatActivity {
                     return;
                 }
                 Message message = response.body();
-                String m = message.getText();
+                String m = Encryption.decrypt(message.getText());
                 if (m.equals("ERROR")) {
                     dosageLabel.setText("Liczba dawek: -");
                 } else {

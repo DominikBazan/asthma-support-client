@@ -1,5 +1,7 @@
 package agh.asthmasupport.communication.objects;
 
+import androidx.annotation.NonNull;
+
 public class Message {
 
     private String text;
@@ -11,5 +13,7 @@ public class Message {
     public String getText() {
         return text;
     }
+
+    public void setText(String text) { this.text = text; }
 
 }
